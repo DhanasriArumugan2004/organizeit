@@ -13,8 +13,9 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     const user = await this.userService.findByEmail(email);
-    if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      const result = { ...user };
+      delete result.password;
       return result;
     }
     return null;
@@ -28,7 +29,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, email: user.email, name: user.name }
+      user: { id: user.id, email: user.email, name: user.name },
     };
   }
 
@@ -40,7 +41,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, email: user.email, name: user.name }
+      user: { id: user.id, email: user.email, name: user.name },
     };
   }
 
